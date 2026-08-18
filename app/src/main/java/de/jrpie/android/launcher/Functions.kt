@@ -28,6 +28,7 @@ import de.jrpie.android.launcher.apps.AbstractAppInfo.Companion.INVALID_USER
 import de.jrpie.android.launcher.apps.AbstractDetailedAppInfo
 import de.jrpie.android.launcher.apps.AppInfo
 import de.jrpie.android.launcher.apps.DetailedAppInfo
+import de.jrpie.android.launcher.apps.IconCache
 import de.jrpie.android.launcher.apps.DetailedPinnedShortcutInfo
 import de.jrpie.android.launcher.apps.PinnedShortcutInfo
 import de.jrpie.android.launcher.apps.getPrivateSpaceUser
@@ -184,6 +185,7 @@ fun getApps(
         try {
             launcherApps.getActivityList(null, user).forEach {
                 loadList.add(DetailedAppInfo(it, it.user == privateSpaceUser))
+                IconCache.prePopulate(context, it)
             }
         } catch (e: Exception) {
             // getActivityList seems to be broken on some Android distributions.
@@ -210,9 +212,11 @@ fun getApps(
             val detailedAppInfo = DetailedAppInfo(
                 app,
                 ri.loadLabel(packageManager),
-                ri.activityInfo.loadIcon(packageManager),
                 false
             )
+            app.getLauncherActivityInfo(context)?.let {
+                IconCache.prePopulate(context, it)
+            }
             loadList.add(detailedAppInfo)
         }
     }
