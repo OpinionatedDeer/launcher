@@ -7,19 +7,22 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
-import android.util.LruCache
+import java.util.concurrent.ConcurrentHashMap
 import androidx.core.graphics.drawable.toDrawable
 import androidx.core.graphics.createBitmap
 
 
 object IconCache {
 
-    //TODO: Set a better way to limit CacheSize for different devices
-    private val cache = LruCache<String, Drawable>(100) // Cache 100 icons, We should somehow decide according to memory
+    private val cache = ConcurrentHashMap<String, Drawable>()
+
+    fun clear() {
+        cache.clear()
+    }
 
     fun getIcon(context: Context, appInfo: AppInfo): Drawable {
         val key = "${appInfo.packageName}:${appInfo.user}"
-        val cachedIcon = cache.get(key)
+        val cachedIcon = cache[key]
         if (cachedIcon != null) {
             return cachedIcon
         }
@@ -27,7 +30,7 @@ object IconCache {
         val icon = fetchIcon(context, appInfo)
         if (icon != null) {
             val processedIcon = processIconSize(context, icon)
-            cache.put(key, processedIcon)
+            cache[key] = processedIcon
             return processedIcon
         }
 

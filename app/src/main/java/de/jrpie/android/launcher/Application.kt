@@ -18,6 +18,7 @@ import androidx.preference.PreferenceManager
 import de.jrpie.android.launcher.actions.TorchManager
 import de.jrpie.android.launcher.apps.AbstractAppInfo
 import de.jrpie.android.launcher.apps.AbstractDetailedAppInfo
+import de.jrpie.android.launcher.apps.IconCache
 import de.jrpie.android.launcher.apps.isPrivateSpaceLocked
 import de.jrpie.android.launcher.preferences.LauncherPreferences
 import de.jrpie.android.launcher.preferences.migratePreferencesToNewVersion
@@ -171,6 +172,7 @@ class Application : android.app.Application() {
     }
 
     private fun loadApps() {
+        IconCache.clear()
         privateSpaceLocked.postValue(isPrivateSpaceLocked(this))
         CoroutineScope(Dispatchers.Default).launch {
             apps.postValue(getApps(packageManager, applicationContext))
