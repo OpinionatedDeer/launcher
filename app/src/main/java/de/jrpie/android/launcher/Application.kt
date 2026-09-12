@@ -26,6 +26,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlin.system.exitProcess
+import de.jrpie.android.launcher.apps.IconCache
+
 
 
 const val APP_WIDGET_HOST_ID = 42
@@ -107,6 +109,7 @@ class Application : android.app.Application() {
         // TODO  Error: Invalid resource ID 0x00000000.
         // DynamicColors.applyToActivitiesIfAvailable(this)
 
+		IconCache.initialize(this)
         Thread.setDefaultUncaughtExceptionHandler { _, throwable ->
             sendCrashNotification(this@Application, throwable)
             exitProcess(1)
