@@ -3,6 +3,7 @@ package de.jrpie.android.launcher.ui.list.apps
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.graphics.Rect
+import android.graphics.drawable.BitmapDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -87,7 +88,15 @@ class AppsRecyclerAdapter(
         val appIcon = appsListDisplayed[i].getIcon(activity)
 
         viewHolder.img.transformMonochrome(grayscale, colorTheme)
-        viewHolder.img.setImageDrawable(appIcon.constantState?.newDrawable() ?: appIcon)
+
+        //Grayscale Fix for the cache: Separate the cache from the transformation wrapper.
+        val drawable = if (appIcon is BitmapDrawable) {
+            BitmapDrawable(activity.resources, appIcon.bitmap)
+        } else {
+            appIcon.constantState?.newDrawable(activity.resources) ?: appIcon
+        }
+
+        viewHolder.img.setImageDrawable(drawable)
 
         if (layout.useBadgedText) {
             appLabel = activity.packageManager.getUserBadgedLabel(
